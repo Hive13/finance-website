@@ -1,0 +1,446 @@
+{% load static %}
+<html>
+<head>
+<title>Hive13 Open Finance Data</title>
+<link rel="shortcut icon" href="{% static 'finance/favicon.ico' %}" type="image/icon">
+<link rel="stylesheet" type="text/css" href="{% static 'finance/css/tabs.css' %}">
+<script type="text/javascript" src="{% static 'finance/node_modules/jquery/dist/jquery.min.js' %}"></script>
+<script type="text/javascript" src="{% static 'finance/node_modules/canvasjs/dist/canvasjs.3.js' %}"></script>
+<script type="text/javascript" src="{% static 'finance/node_modules/moment/min/moment.min.js' %}"></script>
+<script type="text/javascript" src="{% static 'finance/node_modules/underscore/underscore-min.js' %}"></script>
+<script type="text/javascript" src="{% static 'finance/js/tabs.js' %}"></script>
+<script type="text/javascript">
+	window.onload = function() {
+		var chart1 = new CanvasJS.Chart("combinedBalance", {
+			title: {
+			text: "Combined Bank Account/Paypal Balance",
+			},
+			axisX:{
+				title: "Date",
+				gridThickness: 1
+			},
+			axisY:{
+				title: "",
+				gridthickness: 1,
+				valueFormatString: "$#,###,##0.##"
+			},	
+			data: [{
+				type: "line",
+				color: "#5B9BD5",
+				lineThickness: 3,
+				yValueFormatString: "$#,###,##0.##",
+				legendText: "Beginning Balance",
+				showInLegend: true,
+				dataPoints: [
+					{% for month in month_list %}
+					{ x:new Date({{month.jsdate}}) , y: {{ month.combinedbeginning }} },
+					{% endfor %}
+					]
+				},
+				{
+				type: "line",
+				color: "#A5A5A5",
+				lineThickness: 3,
+				yValueFormatString: "$#,###,##0.##",
+				legendText: "Ending Balance",
+				showInLegend: true,
+				dataPoints: [
+					{% for month in month_list %}
+					{ x: new Date({{month.jsdate}}), y: {{ month.combinedending }} },
+					{% endfor %}
+					]
+
+				}
+				]
+
+		});
+		chart1.render();
+		var chart2 = new CanvasJS.Chart("inOut", {
+			title: {
+			text: "In/Out",
+			},
+		axisX:{
+			title: "Date",
+			gridThickness: 1
+		},
+		axisY:{
+			title: "",
+			gridthickness: 1,
+			stripLines:[{value:0,color:"#0000FF"}],
+			valueFormatString: "$#,###,##0.##"
+		},	
+		data: [{
+			type: "column",
+			color: "#ED7D31",
+			lineThickness: 3,
+			yValueFormatString: "$#,###,##0.##",
+			legendText: "In/Out",
+			showInLegend: false,
+			dataPoints: [
+					{% for month in month_list %}
+					{% if month.inout > 0 %}
+					{ color: '#86B402', x: new Date({{month.jsdate}}), y: {{ month.inout }} },
+					{% endif %}
+					{% if month.inout < 0 %}
+					{ color: '#C24642', x: new Date({{month.jsdate}}), y: {{ month.inout }} },
+					{% endif %}
+					{% endfor %}
+					]
+			}
+			]
+
+		});	
+		chart2.render();
+		var chart3 = new CanvasJS.Chart("membershiplevels", {
+			toolTip: {
+			shared: true
+			},
+			title: {
+			text: "Membership over time"
+			},
+		axisX:{
+			title: "Date",
+			gridThickness: 0,
+			valueFormatString: "MMM YYYY"
+		},
+		axisY:{
+			title: "",
+			gridthickness: 1,
+			//valueFormatString: "$#,###,##0.##"
+		},	
+		data: [{
+			name: "Cornerstone",
+			type: "stackedColumn",
+			color: "#FF0000",
+			legendText: "Cornerstone",
+			showInLegend: true,
+			dataPoints: [
+					{% for month in month_list %}
+					{% if month.has_memberdata %}
+					{ x: new Date({{month.jsdate}}), y: {{ month.members_cornerstone }} },
+					{% endif %}
+					{% endfor %}
+					]
+			},{
+			name: "Full",
+			type: "stackedColumn",
+			color: "#00B050",
+			legendText: "Full",
+			showInLegend: true,
+			dataPoints: [
+					{% for month in month_list %}
+					{% if month.has_memberdata %}
+					{ x: new Date({{month.jsdate}}), y: {{ month.members_full }} },
+					{% endif %}
+					{% endfor %}
+					]
+			},{
+			name: "Warden (Full)",
+			type: "stackedColumn",
+			color: "#0070C0",
+			legendText: "Warden (Full)",
+			showInLegend: true,
+			dataPoints: [
+					{% for month in month_list %}
+					{% if month.has_memberdata %}
+					{ x: new Date({{month.jsdate}}), y: {{ month.members_fullwarden }} },
+					{% endif %}
+					{% endfor %}
+					]
+			},{
+			name: "Student",
+			type: "stackedColumn",
+			color: "#FFC000",
+			legendText: "Student",
+			showInLegend: true,
+			dataPoints: [
+					{% for month in month_list %}
+					{% if month.has_memberdata %}
+					{ x: new Date({{month.jsdate}}), y: {{ month.members_student }} },
+					{% endif %}
+					{% endfor %}
+					]
+			},{
+			name: "Warden (Student)",
+			type: "stackedColumn",
+			color: "#7030A0",
+			indexLabel: "#total",
+			indexLabelFontColor: "black",
+			legendText: "Warden (Student)",
+			showInLegend: true,
+			dataPoints: [
+					{% for month in month_list %}
+					{% if month.has_memberdata %}
+					{ x: new Date({{month.jsdate}}), y: {{ month.members_studentwarden }} },
+					{% endif %}
+					{% endfor %}
+					]
+			}
+			]
+
+		});
+		chart3.render();
+		var chart4 = new CanvasJS.Chart("incomeBreakdown", {
+			toolTip: {
+			shared: true
+			},
+			title: {
+			text: "Income over time"
+			},
+		axisX:{
+			title: "Date",
+			gridThickness: 0,
+			valueFormatString: "MMM YYYY"
+		},
+		axisY:{
+			title: "",
+			valueFormatString: "$#,###,##0.##",
+			gridthickness: 1,
+		},	
+		data: [{
+			name: "Cornerstone",
+			type: "stackedColumn",
+			yValueFormatString: "$#,###,##0.##",
+			color: "#FF0000",
+			legendText: "Cornerstone Member Dues",
+			showInLegend: true,
+			dataPoints: [
+					{% for month in month_list %}
+					{% if month.has_memberdata %}
+					{ x: new Date({{month.jsdate}}), y: {{ month.memberincome_cornerstone }} },
+					{% endif %}
+					{% endfor %}
+					]
+			},{
+			name: "Full",
+			type: "stackedColumn",
+			yValueFormatString: "$#,###,##0.##",
+			color: "#00B050",
+			legendText: "Full Member Dues",
+			showInLegend: true,
+			dataPoints: [
+					{% for month in month_list %}
+					{% if month.has_memberdata %}
+					{ x: new Date({{month.jsdate}}), y: {{ month.memberincome_full }} },
+					{% endif %}
+					{% endfor %}
+					]
+			},{
+			name: "Warden (Full)",
+			type: "stackedColumn",
+			yValueFormatString: "$#,###,##0.##",
+			color: "#0070C0",
+			legendText: "Warden-Full Member Dues",
+			showInLegend: true,
+			dataPoints: [
+					{% for month in month_list %}
+					{% if month.has_memberdata %}
+					{ x: new Date({{month.jsdate}}), y: {{ month.memberincome_fullwarden }} },
+					{% endif %}
+					{% endfor %}
+					]
+			},{
+			name: "Student",
+			type: "stackedColumn",
+			yValueFormatString: "$#,###,##0.##",
+			color: "#FFC000",
+			legendText: "Student Member Dues",
+			showInLegend: true,
+			dataPoints: [
+					{% for month in month_list %}
+					{% if month.has_memberdata %}
+					{ x: new Date({{month.jsdate}}), y: {{ month.memberincome_student }} },
+					{% endif %}
+					{% endfor %}
+					]
+			},{
+			name: "Warden (Student)",
+			type: "stackedColumn",
+			yValueFormatString: "$#,###,##0.##",
+			color: "#7030A0",
+			legendText: "Warden-Student Member Dues",
+			showInLegend: true,
+			dataPoints: [
+					{% for month in month_list %}
+					{% if month.has_memberdata %}
+					{ x: new Date({{month.jsdate}}), y: {{ month.memberincome_studentwarden }} },
+					{% endif %}
+					{% endfor %}
+					]
+			},{
+			name: "Laser Income",
+			type: "stackedColumn",
+			yValueFormatString: "$#,###,##0.##",
+			color: "DarkOrange",
+			legendText: "Laser Minute Purchases",
+			showInLegend: true,
+			dataPoints: [
+					{% for month in month_list %}
+					{% if month.has_memberdata %}
+					{ x: new Date({{month.jsdate}}), y: {{ month.laserincome }} },
+					{% endif %}
+					{% endfor %}
+					]
+			},{
+			name: "Other Income",
+			type: "stackedColumn",
+			yValueFormatString: "$#,###,##0.##",
+			color: "chocolate",
+			legendText: "Other Income",
+			showInLegend: true,
+			dataPoints: [
+					{% for month in month_list %}
+					{% if month.has_memberdata %}
+					{ x: new Date({{month.jsdate}}), y: {{ month.otherincome }} },
+					{% endif %}
+					{% endfor %}
+					]
+			}
+			]
+
+		});
+		chart4.render();
+		var chart5 = new CanvasJS.Chart("monthlyExpenses", {
+			toolTip: {
+			shared: true
+			},
+			title: {
+			text: "Fixed Monthly Expenses"
+			},
+		axisX:{
+			title: "Date",
+			gridThickness: 0,
+			valueFormatString: "MMM YYYY"
+		},
+		axisY:{
+			title: "",
+			gridthickness: 1,
+		},	
+		data: [{
+			type: "pie",
+			yValueFormatString: "$#,###,##0.##",
+			dataPoints:[
+				{ y: {{ month_list.latest.rent }}, indexLabel: "Rent" },
+				{ y: {{ month_list.latest.cable }}, indexLabel: "Cable" },
+				{ y: {{ month_list.latest.insurance }}, indexLabel: "Insurance" }
+			] 
+			}]
+
+		});
+		chart5.render();
+		var chart6 = new CanvasJS.Chart("currentMembership", {
+			toolTip: {
+			shared: true
+			},
+			title: {
+			text: "Current Membership"
+			},
+		axisX:{
+			title: "Date",
+			gridThickness: 0,
+			valueFormatString: "MMM YYYY"
+		},
+		axisY:{
+			title: "",
+			gridthickness: 1,
+		},	
+		data: [{
+			type: "pie",
+			dataPoints: [
+					{% if month_list.latest.members_cornerstone != 0 %}
+					{ color: '#FF0000', indexLabel: "Cornerstone" , y: {{ month_list.latest.members_cornerstone }} },
+					{% endif %}
+					{% if month_list.latest.members_full != 0 %}
+					{ color: '#00B050', indexLabel: "Full" , y: {{ month_list.latest.members_full }} },
+					{% endif %}
+					{% if month_list.latest.members_fullwarden != 0 %}
+					{ color: '#0070C0', indexLabel: "Full (Warden)" , y: {{ month_list.latest.members_fullwarden }} },
+					{% endif %}
+					{% if month_list.latest.members_student != 0 %}
+					{ color: '#FFC000', indexLabel: "Student" , y: {{ month_list.latest.members_student }} },
+					{% endif %}
+					{% if month_list.latest.members_studentwarden != 0 %}
+					{ color: '#7030A0', indexLabel: "Student (Warden)" , y: {{ month_list.latest.members_studentwarden }} },
+					{% endif %}
+					]
+		}]
+
+		});
+		chart6.render();
+		var chart7 = new CanvasJS.Chart("currentIncome", {
+			toolTip: {
+			shared: true
+			},
+			title: {
+			text: "Current Month Income Breakdown"
+			},
+		data: [{
+			type: "pie",
+			toolTipContent: "{indexLabel}: {y}",
+			yValueFormatString: "$#,###,##0.##",
+			dataPoints:[
+				{% if month_list.latest.memberincome_cornerstone != 0 %}
+				{ color: '#FF0000', y: {{ month_list.latest.memberincome_cornerstone }}, indexLabel: "Cornerstone Dues" },
+				{% endif %}
+				{% if month_list.latest.memberincome_full != 0 %}
+				{ color: '#00B050', y: {{ month_list.latest.memberincome_full }}, indexLabel: "Full Member Dues" },
+				{% endif %}
+				{% if month_list.latest.memberincome_fullwarden != 0 %}
+				{ color: '#0070C0', y: {{ month_list.latest.memberincome_fullwarden }}, indexLabel: "Warden-Full Dues" },
+				{% endif %}
+				{% if month_list.latest.memberincome_student != 0 %}
+				{ color: '#FFC000', y: {{ month_list.latest.memberincome_student }}, indexLabel: "Student Dues" },
+				{% endif %}
+				{% if month_list.latest.memberincome_studentwarden != 0 %}
+				{ color: '#7030A0', y: {{ month_list.latest.memberincome_studentwarden }}, indexLabel: "Warden-Student Dues" },
+				{% endif %}
+				{% if month_list.latest.memberincome_laserincome != 0 %}
+				{ color: 'DarkOrange', y: {{ month_list.latest.laserincome }}, indexLabel: "Laser Mins." },
+				{% endif %}
+				{% if month_list.latest.memberincome_otherincome != 0 %}
+				{ color: 'chocolate', y: {{ month_list.latest.otherincome }}, indexLabel: "Other" }
+				{% endif %}
+			] 
+			}]
+
+		});
+		chart7.render();
+		}
+</script>
+</head>
+<body>
+<a href="https://hive13.org"><img src="{% static 'finance/img/logo.png' %}" height=100px style="padding-bottom: 10px; vertical-align: middle"></a><font face="sans" size="75px" style="vertical-align: middle; padding-left: 10px"><b>Open Finance Data</b></font>
+	<ul class="tab">
+		<li><a href="javascript:void(0)" class="tablinks" onclick="openTab(event, 'BankBalance')" id="defaultOpen">Bank Balance</a></li>
+		<li><a href="javascript:void(0)" class="tablinks" onclick="openTab(event, 'Membership')">Memberships</a></li>
+		<li><a href="javascript:void(0)" class="tablinks" onclick="openTab(event, 'ExpenseIncome')">Expenses/Income</a></li>
+		<li><a href="javascript:void(0)" class="tablinks" onclick="openTab(event, 'RawData')">Raw Data</a></li>
+</ul>
+
+<div id="BankBalance" class="tabcontent">
+		<div class="chart" id="combinedBalance" style="width:100%; height:400px;"></div>
+		<hr>
+		<div class="chart" id="inOut" style="width:100%; height:300px;"></div>
+</div>
+
+<div id="Membership" class="tabcontent">
+		<div class="chart" id="currentMembership" style="width:100%; height:400px;"></div>
+		<div class="chart" id="membershiplevels" style="width:100%; height:400px;"></div>
+</div>
+
+<div id="ExpenseIncome" class="tabcontent">
+		<div class="chart" id="monthlyExpenses" style="float: left; width:50%; height:400px;"></div>
+		<div class="chart" id="currentIncome" style="float: left; width:50%; height:400px;"></div>
+		<hr>
+		<div class="chart" id="incomeBreakdown" style="clear:both; width:100%; height:400px;"></div>
+</div>
+
+<div id="RawData" class="tabcontent">
+Export Raw Data: <a href="{% url 'finance:export' %}">CSV</a>
+</div>
+<script>
+document.getElementById("defaultOpen").click();
+</script>
+<div style="text-align:center;width:100%;color:darkgrey;top:10px;position:relative;">Data available: {{month_list.earliest.monthname}} {{month_list.earliest.year}} - {{month_list.latest.monthname}} {{month_list.latest.year}}</div>
+</body>
+</html>
