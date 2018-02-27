@@ -1,2 +1,4 @@
 db.sqlite3
 hive13/settings.py
+finance/*.pyc
+hive13/*.pyc
