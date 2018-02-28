@@ -23,36 +23,26 @@ MONTHS = (
 
 def tuplify(x): return (x,str(x))   # str(x) if needed
 
-current_year = datetime.datetime.now().year
-YEARS = map(tuplify, range(2009, current_year + 2))
+def DefaultMonth():
+    if timezone.now().month == 1:
+        return 12
+    else:
+        return timezone.now().month - 1
 
-""" Dynamically updating year list in admin interface. Not working. "choices" cannot accept callable method?"""
-#class YearRange(list):
-#    """ Returns range of years from 2009 (hive13 founded) to now """
-#    def __call__(self):
-#        current_year = timezone.now().year
-#        YEARS = map(tuplify, range(2009, current_year + 1))
-#        return YEARS
+def DefaultYear():
+    if timezone.now().month == 1:
+        return timezone.now().year - 1
+    else:
+        return timezone.now().year
 
-class DefaultMonth(object):
-    """ Returns previous month """
-    def __call__(self):
-        if timezone.now().month == 1:
-            return 12
-        else:
-            return timezone.now().month - 1
-
-class DefaultYear(object):
-    """ Returns last months year (i.e. last year in january, otherwise current year) """
-    def __call__(self):
-        if timezone.now().month == 1:
-            return timezone.now().year - 1
-        else:
-            return timezone.now().year
+def YearRange():
+    current_year = datetime.datetime.now().year
+    YEARS = map(tuplify, range(2009, current_year + 2))
+    return YEARS
 
 class MonthlyData(models.Model):
     #Date
-    year = models.IntegerField(default=DefaultYear(),choices=YEARS)
+    year = models.IntegerField(default=DefaultYear(),choices=YearRange())
     month = models.IntegerField(default=DefaultMonth(),choices=MONTHS)
     #Membership info
     members_cornerstone = models.IntegerField(default=0)
