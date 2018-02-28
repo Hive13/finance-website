@@ -36,7 +36,7 @@ def DefaultYear():
         return timezone.now().year
 
 def YearRange():
-    current_year = datetime.datetime.now().year
+    current_year = timezone.now().year
     YEARS = map(tuplify, range(2009, current_year + 2))
     return YEARS
 
@@ -75,7 +75,7 @@ class MonthlyData(models.Model):
     @property
     def enddate(self):
         day = monthrange(self.year,self.month)[1]
-        return date(self.year, self.month, day)
+        return datetime.date(self.year, self.month, day)
     #Last day of the month, javascript format
     @property
     def jsdate(self):
