@@ -51,10 +51,15 @@ class MonthlyData(models.Model):
     members_student = models.IntegerField(default=0)
     members_studentwarden = models.IntegerField(default=0)
     #Balance: PNC
-    pnc_beginning = models.DecimalField(max_digits=9, decimal_places=2, default=0.00)
-    pnc_deposits = models.DecimalField(max_digits=9, decimal_places=2, default=0.00)
-    pnc_deductions = models.DecimalField(max_digits=9, decimal_places=2, default=0.00)
-    pnc_ending = models.DecimalField(max_digits=9, decimal_places=2, default=0.00)
+    pnc_main_beginning = models.DecimalField(max_digits=9, decimal_places=2, default=0.00)
+    pnc_main_deposits = models.DecimalField(max_digits=9, decimal_places=2, default=0.00)
+    pnc_main_deductions = models.DecimalField(max_digits=9, decimal_places=2, default=0.00)
+    pnc_main_ending = models.DecimalField(max_digits=9, decimal_places=2, default=0.00)
+    #Balance: PNC Outreach
+    pnc_outreach_beginning = models.DecimalField(max_digits=9, decimal_places=2, default=0.00)
+    pnc_outreach_deposits = models.DecimalField(max_digits=9, decimal_places=2, default=0.00)
+    pnc_outreach_deductions = models.DecimalField(max_digits=9, decimal_places=2, default=0.00)
+    pnc_outreach_ending = models.DecimalField(max_digits=9, decimal_places=2, default=0.00)
     #Balance: Paypal
     pp_beginning = models.DecimalField(max_digits=9, decimal_places=2, default=0.00)
     pp_credits = models.DecimalField(max_digits=9, decimal_places=2, default=0.00)
@@ -91,10 +96,10 @@ class MonthlyData(models.Model):
     #Combined balances
     @property
     def combinedbeginning(self):
-        return self.pnc_beginning + self.pp_beginning
+        return self.pnc_main_beginning + self.pnc_outreach_beginning + self.pp_beginning
     @property
     def combinedending(self):
-        return self.pnc_ending + self.pp_ending
+        return self.pnc_main_ending + self.pnc_outreach_ending + self.pp_ending
     #In-out value
     @property
     def inout(self):
