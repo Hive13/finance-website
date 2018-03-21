@@ -42,8 +42,8 @@ def YearRange():
 
 class MonthlyData(models.Model):
     #Date
-    year = models.IntegerField(default=DefaultYear(),choices=YearRange())
-    month = models.IntegerField(default=DefaultMonth(),choices=MONTHS)
+    year = models.IntegerField(default=DefaultYear,choices=YearRange())
+    month = models.IntegerField(default=DefaultMonth,choices=MONTHS)
     #Membership info
     members_cornerstone = models.IntegerField(default=0)
     members_full = models.IntegerField(default=0)
