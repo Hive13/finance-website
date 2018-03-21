@@ -1,5 +1,4 @@
 db.sqlite3
 hive13/settings.py
-hive13/*.pyc
-finance/*.pyc
-finance/migrations/*.pyc
+*.pyc
+*.swp
