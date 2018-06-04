@@ -89,10 +89,10 @@ class MonthlyData(models.Model):
     #Readable month name
     @property
     def monthname(self):
-	for mon in MONTHS:
-		if mon[0] == self.month:
-			mname=mon[1]
-        return mname
+        for mon in MONTHS:
+            if mon[0] == self.month:
+                mname=mon[1]
+                return mname
     #Combined balances
     @property
     def combinedbeginning(self):
