@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+{% load static %}
+<html>
+<head>
+<title>Hive13 Open Finance Data</title>
+<link rel="shortcut icon" href="{% static 'finance/favicon.ico' %}" type="image/icon">
+<link rel="stylesheet" type="text/css" href="{% static 'finance/css/nav.css' %}">
+</head>
+<body>
+<a href="https://hive13.org"><img src="{% static 'finance/img/logo.png' %}" height=100px style="padding-bottom: 10px; vertical-align: middle"></a><font face="sans" size="75px" style="vertical-align: middle; padding-left: 10px"><b>Open Finance Data</b></font>
+<div class="topnav">
+  <a {% if "balance" in tab %}class="active"{%endif%} href="{% url 'finance:balance' %}">Balance</a>
+  <a {% if "membership" in tab %}class="active"{%endif%} href="{% url 'finance:membership' %}">Membership</a>
+  <a {% if "expensesincome" in tab %}class="active"{%endif%} href="{% url 'finance:expensesincome' %}">Expenses/Income</a>
+  <a {% if "rawdata" in tab %}class="active"{%endif%} href="{% url 'finance:rawdata' %}">Raw Data</a>
+</div> 
