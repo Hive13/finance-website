@@ -30,3 +30,12 @@ h2 {
 	text-align: center;
 	font-family: sans;
 }
+
+.footer a:link { color: darkgrey; }
+.footer a:visited { color: darkgrey; }
+.footer a:hover { color: darkgrey; }
+.footer a:active { color: darkgrey; }
+.footer {
+    color: darkgrey;
+    bottom:10px
+}
