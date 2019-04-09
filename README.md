@@ -7,6 +7,7 @@ Python module requirements: django-queryset-csv
 
 Instructions:
 1. Download repo
+1. Install required python packages: `pip install -r requirements.txt`
 1. Copy hive13/settings.py.example to hive13/settings.py and edit:
    1. Add the SECRET_KEY or generate a new one.
    1. Add the hostname the websites domain name to ALLOWED_HOSTS
